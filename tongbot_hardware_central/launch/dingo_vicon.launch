@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+
+<!-- Track the Ridgeback base using Vicon -->
+<launch>
+  <!-- <arg name="use_joy_stick_relay" default="false" doc="use joy stick for emergency stop"/> -->
+
+  <param name="base_vicon_topic" value="/vicon/Dingo_Kinova/Dingo"/>
+
+  <include file="$(find tongbot_hardware_central)/launch/vicon.launch" />
+
+  <!-- Republish Vicon /dingo/cmd_vel to /dingo_velocity_controller/cmd_vel -->
+  <node name="dingo_velocity_relay" pkg="topic_tools" type="relay" respawn="true" args="dingo/cmd_vel dingo_velocity_controller/cmd_vel" output="screen" unless="$(arg use_joy_stick_relay)"/>
+
+  <!-- Estimation of Ridgeback joint state from Vicon messages. -->
+  <node pkg="tongbot_hardware_central" type="dingo_vicon_estimator_node" name="dingo_vicon_estimator_node" required="true" output="screen" />
+</launch>
